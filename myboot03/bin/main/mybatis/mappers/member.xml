@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myboot03.member.dao.MemberDAO">
+	<resultMap id="memResult" type="memberVO">
+		<result property="rowNum" column="rowNum"/>
+		<result property="id" column="id"/>
+		<result property="pwd" column="pwd"/>
+		<result property="name" column="name"/>
+		<result property="email" column="email"/>
+		<result property="memberSort" column="memberSort"/>
+		<result property="grade" column="grade"/>
+		<result property="stuClass" column="stuClass"/>
+		<result property="korean" column="korean"/>
+		<result property="english" column="english"/>
+		<result property="math" column="math"/>
+		<result property="science" column="science"/>
+		<result property="history" column="history"/>
+		<result property="ethics" column="ethics"/>
+		<result property="art" column="art"/>
+		<result property="music" column="music"/>
+		<result property="physical" column="physical"/>
+		<result property="joinDate" column="joinDate"/>
+		<result property="enterDate" column="enterDate"/>
+		<result property="imageFN" column="imageFN"/>
+	</resultMap>
+	
+	<select id="selectAllMemberList" resultMap="memResult">
+	<![CDATA[
+		select * from c_member where id != 'admin' and memberSort != 'teacher' order by grade,stuClass
+	]]>
+	</select>
+	<select id="selectGrade_1_MemberList" resultMap="memResult">
+	<![CDATA[
+		select * from c_member where id != 'admin' and memberSort != 'teacher' and grade = '1' order by grade
+	]]>
+	</select>
+	<select id="selectGrade_2_MemberList" resultMap="memResult">
+	<![CDATA[
+		select * from c_member where id != 'admin' and memberSort != 'teacher' and  grade = '2' order by grade
+	]]>
+	</select>
+	<select id="selectGrade_3_MemberList" resultMap="memResult">
+	<![CDATA[
+		select * from c_member where id != 'admin' and memberSort != 'teacher' and grade = '3' order by grade
+	]]>
+	</select>
+	
+	<select id="selectRankList" resultMap="memResult">
+	<![CDATA[
+		select rowNum,A.* from (select * from c_member where id != 'admin' and memberSort != 'teacher' and grade =#{grade} order by korean+english+math+science+history+ethics+art+music+physical desc) A
+	]]>
+	</select>
+	<select id="selectTeacherList" resultMap="memResult">
+	<![CDATA[
+		select * from c_member where memberSort = 'teacher' order by grade desc
+	]]>
+	</select>
+	<select id="selectStuClassList" resultMap="memResult">
+	<![CDATA[
+		select * from c_member order by grade desc
+	]]>
+	</select>
+	<select id="select_1st_StuClassList" resultMap="memResult">
+	<![CDATA[
+		select  DISTINCT STUCLASS,GRADE from c_member where grade = '1' ORDER BY STUCLASS
+		
+	]]>
+	</select>
+	<select id="selectEachStuClassList" resultMap="memResult">
+	<![CDATA[
+		select  * from c_member where grade = #{grade} and stuclass = #{stuClass} order by DECODE(memberSort,'teacher',1),name
+	]]>
+	</select>
+	<select id="select_2st_StuClassList" resultMap="memResult">
+	<![CDATA[
+		select  DISTINCT STUCLASS,GRADE from c_member where grade = '2' ORDER BY STUCLASS
+	]]>
+	</select>
+	<select id="select_3st_StuClassList" resultMap="memResult">
+	<![CDATA[
+		select  DISTINCT STUCLASS,GRADE from c_member where grade = '3' ORDER BY STUCLASS
+	]]>
+	</select>
+	<select id="selectName" resultType="String">
+	<![CDATA[
+		select name from c_member where id = 'hong'
+	]]>
+	</select>
+	<select id="selectPwd" resultType="int">
+	<![CDATA[
+		select pwd from c_member where id = 'hong'
+	]]>
+	</select>
+	<select id="selectMemberById" resultType="memberVO" parameterType="String">
+	<![CDATA[
+		select * from c_member where id = #{id}
+	]]>
+	</select>
+	<select id="selectMemberByPwd" resultMap="memResult" parameterType="int">
+	<![CDATA[
+		select * from c_member where pwd = #{pwd}
+	]]>
+	</select>
+	<select id="loginById" resultType="memberVO" parameterType="memberVO">
+	<![CDATA[
+		select * from c_member where id = #{id} and pwd = #{pwd}
+	]]>
+	</select>
+	
+	<insert id="insertMember" parameterType="memberVO">
+	<if test="imageFN != null">
+	<![CDATA[
+	
+		insert into c_member(id,pwd,name,email,imageFN)
+		values(#{id},#{pwd},#{name},#{email},#{imageFN})
+	]]>
+	</if>
+	<if test="imageFN == null">
+	<![CDATA[
+	
+		insert into c_member(id,pwd,name,email)
+		values(#{id},#{pwd},#{name},#{email})
+	]]>
+	</if>
+	</insert>
+	
+	<insert id="insertMember2" parameterType="java.util.HashMap">
+	<![CDATA[
+		insert into c_member(id,pwd,name,email,grade)
+		values(#{id},#{pwd},#{name},#{email},#{grade)
+	]]>
+	</insert>
+	
+	<update id="updateMember" parameterType="memberVO">
+	
+	
+	<![CDATA[
+		update c_member  
+		set pwd= #{pwd}, name=#{name}, email= #{email}, memberSort=#{memberSort},grade=#{grade},stuClass=#{stuClass},korean= #{korean}, english= #{english}, math= #{math}, science= #{science}, history= #{history}, ethics= #{ethics}, art= #{art}, music= #{music}, physical= #{physical}, enterDate=#{enterDate},imageFN=#{imageFN} 
+		 where id= #{id}
+	]]>
+
+	
+	</update>
+	<update id="updateTeacher" parameterType="memberVO">
+	
+	<if test="imageFN != null">
+	<![CDATA[
+		update c_member  
+		set pwd= #{pwd}, name=#{name}, email= #{email},memberSort=#{memberSort}, grade=#{grade}, stuClass = #{stuClass},imageFN=#{imageFN} , enterDate=#{enterDate}
+		 where id= #{id}
+	]]>
+	</if>
+	<if test="imageFN == null">
+	<![CDATA[
+		update c_member  
+		set pwd= #{pwd}, name=#{name}, email= #{email},memberSort=#{memberSort}, grade=#{grade} , stuClass = #{stuClass}, enterDate=#{enterDate}
+		 where id= #{id}
+	]]>
+	</if>
+	</update>
+	
+	<select id="deleteMember" parameterType="String">
+	<![CDATA[
+		delete from c_member 
+		where id=#{id}
+	]]>
+	</select>
+	
+	
+	<select id="searchMember" parameterType="memberVO" resultMap="memResult">
+	<![CDATA[
+		select * from c_member 
+	]]>
+		<where>
+			<if test="name != '' and name != null">
+				name=#{name}
+			</if>
+			<if test="email != '' and email != null">
+				and email = #{email}
+			</if>
+		</where>
+		order by joinDate desc
+	</select>
+	
+	<select id="foreachSelect" resultMap="memResult" parameterType="java.util.Map">
+	<![CDATA[
+		select * from c_member
+	]]>
+	
+	where name in
+	<foreach item="item" collection="list" open="(" separator="," close=")">
+		#{item}
+	</foreach>
+	order by joinDate desc
+	</select>
+	
+	<insert id="foreachInsert" parameterType="java.util.Map">
+	<foreach item="item" collection="list" 
+	open="INSERT ALL" separator=" " close="SELECT * FROM DUAL">
+		INTO c_member(id, pwd, name, email)
+		VALUES (#{item.id},#{item.pwd},#{item.name},#{item.email})
+	</foreach>
+	</insert>
+	
+	<select id="selectLike" resultMap="memResult" parameterType="String">
+	<![CDATA[
+		select * from c_member where name like '%' || #{name} || '%'
+	]]>
+	</select>
+</mapper>
