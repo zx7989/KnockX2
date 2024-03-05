@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.member.dao.MemberDAO">
+<resultMap id="memResult" type="MemberVO">
+    <result property="id" column="id"/>
+    <result property="kakaoid" column="kakaoid"/>
+    <result property="pwd" column="pwd"/>
+    <result property="name" column="name"/>
+    <result property="email" column="email"/>
+    <result property="memberSort" column="memberSort"/>
+    <result property="call_num" column="call_num"/>
+    <result property="birth" column="birth"/>
+    <result property="zipcode" column="zipcode"/>
+    <result property="roadAddress" column="roadAddress"/>
+    <result property="jibunAddress" column="jibunAddress"/>
+    <result property="namujiAddress" column="namujiAddress"/>
+    <result property="buyPoint" column="buyPoint"/>
+    <result property="imageFN" column="imageFN"/>
+    <result property="joinDate" column="joinDate"/>
+    <collection property="shopVO" resultMap="shopResult" ></collection>
+    <collection property="memberAddVO" resultMap="memAddResult" ></collection>
+</resultMap>
+<resultMap id="shopResult" type="ShopVO">
+	<result property="shop_code" column="shop_code"/>
+	<result property="id" column="id"/>
+	<result property="shop_name" column="shop_name"/>
+	<result property="shop_num" column="shop_num"/>
+	<result property="shopTotalPrice" column="shop_total_price"/>
+</resultMap>
+<resultMap id="memAddResult" type="MemberAddVO">
+    <result property="id" column="id"/>
+    <result property="m_voice" column="m_voice"/>
+    <result property="m_data" column="m_data"/>
+    <result property="m_sms" column="m_sms"/>
+    <result property="m_dis" column="m_dis"/>
+</resultMap>
+
+
+	<select id="selectAllMemberList" resultMap="memResult">
+	<![CDATA[
+		select * from P_MEMBER where id != 'admin' and memberSort != 'shop' order by joinDate
+	]]>
+	</select>
+	<select id="selectShopJoin" resultMap="memResult">
+	<![CDATA[
+		select * from P_MEMBER where id != 'admin' and memberSort != 'member' order by joinDate
+	]]>
+	</select>
+	<select id="selectAllMemberPageList" resultMap="memResult">
+	<![CDATA[
+		select * from(
+		select p_member.*, ROW_NUMBER() OVER (ORDER BY joinDate) AS rn from P_MEMBER where id != 'admin' and memberSort != 'shop')
+		WHERE rn >= #{offset} AND rn <= #{offset} + #{pageSize} - 1
+	]]>
+	</select>
+	<select id="selectAllShopList" parameterType="ShopVO" resultMap="memResult">
+    <![CDATA[
+        SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_Shop s ON m.id = s.id
+        WHERE m.id != 'admin' AND m.memberSort != 'member'
+        order by s.shop_total_price desc
+    ]]>
+</select>
+<select id="selectAllShopPageList" resultMap="memResult" parameterType="map">
+    <![CDATA[
+   SELECT *
+FROM (
+    SELECT m.*, s.shop_code, s.shop_name, s.shop_num, s.shop_total_price,
+        ROW_NUMBER() OVER (ORDER BY s.shop_total_price desc) AS rn
+    FROM P_MEMBER m
+    JOIN P_Shop s ON m.id = s.id
+    WHERE m.id != 'admin' AND m.membersort != 'member'
+)
+WHERE rn >= #{offset} AND rn <= #{pageSize}
+
+
+    ]]>
+</select>
+	
+
+	
+	<select id="selectName" resultType="String">
+	<![CDATA[
+		select name from P_MEMBER where id = 'hong'
+	]]>
+	</select>
+	<select id="selectPwd" resultType="int">
+	<![CDATA[
+		select pwd from P_MEMBER where id = 'hong'
+	]]>
+	</select>
+		<select id="selectMemById" resultType="memberVO" parameterType="String">
+	<![CDATA[
+		 SELECT *
+        FROM P_MEMBER 
+        WHERE id = #{id}
+	]]>
+	</select>
+	<select id="selectMemberById" resultType="memberVO" parameterType="String">
+	<![CDATA[
+		 SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_MEMBER_ADD s ON m.id = s.id
+        WHERE m.id = #{id}
+	]]>
+	</select>
+	<select id="selectShopById" resultMap="memResult" parameterType="String">
+	<![CDATA[
+		 SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_Shop s ON m.id = s.id
+        WHERE m.id = #{id}
+	]]>
+	</select>
+	<update id="updateSTP" parameterType="ShopVO">
+			<![CDATA[
+		update p_shop set shop_total_price = #{shopTotalPrice} where shop_code = #{shop_code}
+			]]>
+	</update>
+	<select id="selectShopByCode" resultMap="shopResult" parameterType="String">
+	<![CDATA[
+		 SELECT *
+        FROM P_shop
+        WHERE shop_code = #{shop_code}
+	]]>
+	</select>
+	<select id="selectMemberByPwd" resultMap="memResult" parameterType="int">
+	<![CDATA[
+		select * from P_MEMBER where pwd = #{pwd}
+	]]>
+	</select>
+	<select id="loginById" resultMap="memResult" parameterType="MemberVO">
+	<![CDATA[
+		select * from P_MEMBER where id = #{id} and pwd = #{pwd}
+	]]>
+	</select>
+	<select id="kakaoLoginById" resultMap="memResult" parameterType="MemberVO">
+	<![CDATA[
+		select * from P_MEMBER where kakaoid = #{kakaoid}
+	]]>
+	</select>
+	<select id="loginShopById" resultMap="memResult" parameterType="MemberVO">
+	
+	<![CDATA[
+		 SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_Shop s ON m.id = s.id
+        where m.id = #{id} and m.pwd = #{pwd}
+	]]>
+	</select>
+	
+	<select id="rate" resultMap="memAddResult" parameterType="MemberAddVO">
+	<![CDATA[
+		select * from P_MEMBER_ADD where id = #{id}
+	]]>
+	</select>
+	<!-- MemberVO 삽입 -->
+	<insert id="updateKakao" parameterType="MemberVO">
+		<![CDATA[
+		Update P_member set kakaoid = #{kakaoid} where id= #{id}
+		]]>
+	</insert>
+	<insert id="deleteKakao" parameterType="MemberVO">
+		<![CDATA[
+		Update P_member set kakaoid = null where id= #{id}
+		]]>
+	</insert>
+	<insert id="insertMember" parameterType="MemberVO">
+    <if test="imageFN != null and shopVO != null">
+        INSERT ALL INTO P_MEMBER (id, pwd, name, email, memberSort, call_num, birth, zipcode, roadAddress, jibunAddress, namujiAddress, imageFN)
+        VALUES (#{id}, #{pwd}, #{name}, #{email}, #{memberSort}, #{call_num}, #{birth}, #{zipcode}, #{roadAddress}, #{jibunAddress}, #{namujiAddress}, #{imageFN})
+        INTO P_SHOP (shop_code, id, shop_name, shop_num)
+        VALUES (#{shopVO.shop_code}, #{id}, #{shopVO.shop_name}, #{shopVO.shop_num}) SELECT 1 FROM DUAL
+    </if>
+    <if test="imageFN != null and shopVO == null">
+        INSERT ALL
+		INTO P_MEMBER (id, pwd, name, email, memberSort, call_num, birth, zipcode, roadAddress, jibunAddress, namujiAddress, imageFN)
+        VALUES (#{id}, #{pwd}, #{name}, #{email}, #{memberSort}, #{call_num}, #{birth}, #{zipcode}, #{roadAddress}, #{jibunAddress}, #{namujiAddress}, #{imageFN})
+        INTO P_MEMBER_ADD (id, m_voice, m_data, m_sms, m_dis)
+		VALUES 	(#{id},#{memberAddVO.m_voice}, #{memberAddVO.m_data}, #{memberAddVO.m_sms}, #{memberAddVO.m_dis}) SELECT 1 FROM DUAL
+    </if>
+    <if test ="imageFN == null and shopVO != null">
+        INSERT ALL INTO P_MEMBER (id, pwd, name, email, memberSort, call_num, birth, zipcode, roadAddress, jibunAddress, namujiAddress)
+        VALUES (#{id}, #{pwd}, #{name}, #{email}, #{memberSort}, #{call_num}, #{birth}, #{zipcode}, #{roadAddress}, #{jibunAddress}, #{namujiAddress})
+        INTO P_SHOP (shop_code, id, shop_name, shop_num)
+        VALUES (#{shopVO.shop_code}, #{id}, #{shopVO.shop_name}, #{shopVO.shop_num}) SELECT 1 FROM DUAL
+    </if>
+    <if test ="imageFN == null and shopVO == null">
+        INSERT ALL
+        INTO P_MEMBER (id, pwd, name, email, memberSort, call_num, birth, zipcode, roadAddress, jibunAddress, namujiAddress)
+        VALUES (#{id}, #{pwd}, #{name}, #{email}, #{memberSort}, #{call_num}, #{birth}, #{zipcode}, #{roadAddress}, #{jibunAddress}, #{namujiAddress})
+        INTO P_MEMBER_ADD (id, m_voice, m_data, m_sms, m_dis)
+		VALUES 	(#{id}, #{memberAddVO.m_voice}, #{memberAddVO.m_data}, #{memberAddVO.m_sms}, #{memberAddVO.m_dis}) SELECT 1 FROM DUAL
+    </if>
+</insert>
+
+<!-- ShopVO 삽입 -->
+<insert id="insertShop" parameterType="ShopVO">
+  <![CDATA[
+  	INSERT INTO P_MEMBER (id, pwd, name, email, memberSort, call_num, birth, zipcode, roadAddress, jibunAddress, namujiAddress, imageFN, joinDate)
+    VALUES (#{id}, #{pwd}, #{name}, #{email}, #{memberSort}, #{call_num}, #{birth}, #{zipcode}, #{roadAddress}, #{jibunAddress}, #{namujiAddress}, #{imageFN}, #{joinDate})
+    INSERT INTO P_SHOP (shop_code, id, shop_name, shop_num)
+    VALUES (#{shopCode}, #{id}, #{shopName}, #{shopNum})
+  ]]>
+</insert>
+<select id="selectOverlappedID" parameterType="String">
+	   select decode(count(*),1, 'true', 0, 'false')
+	   from P_MEMBER 
+	   where id=#{id}
+	</select>
+	
+	
+	
+	<update id="updateMember" parameterType="memberVO">
+	
+	
+	<![CDATA[
+		update P_MEMBER  
+		set pwd= #{pwd}, name=#{name}, email= #{email}, memberSort=#{memberSort},imageFN=#{imageFN} 
+		 where id= #{id}
+	]]>
+
+	
+	</update>
+	
+	
+	<select id="deleteMember" parameterType="String">
+	<![CDATA[
+		delete from P_MEMBER 
+		where id=#{id}
+	]]>
+	</select>
+	
+	
+	<select id="searchMember" parameterType="memberVO" resultMap="memResult">
+	<![CDATA[
+		select * from P_MEMBER 
+	]]>
+		<where>
+			<if test="name != '' and name != null">
+				name=#{name}
+			</if>
+			<if test="email != '' and email != null">
+				and email = #{email}
+			</if>
+		</where>
+		order by joinDate desc
+	</select>
+	
+	<select id="foreachSelect" resultMap="memResult" parameterType="java.util.Map">
+	<![CDATA[
+		select * from P_MEMBER
+	]]>
+	
+	where name in
+	<foreach item="item" collection="list" open="(" separator="," close=")">
+		#{item}
+	</foreach>
+	order by joinDate desc
+	</select>
+	
+	<insert id="foreachInsert" parameterType="java.util.Map">
+	<foreach item="item" collection="list" 
+	open="INSERT ALL" separator=" " close="SELECT * FROM DUAL">
+		INTO P_MEMBER(id, pwd, name, email)
+		VALUES (#{item.id},#{item.pwd},#{item.name},#{item.email})
+	</foreach>
+	</insert>
+	
+	<select id="selectLike" resultMap="memResult" parameterType="String">
+	<![CDATA[
+		select * from P_MEMBER where name like '%' || #{name} || '%'
+	]]>
+	</select>
+</mapper>

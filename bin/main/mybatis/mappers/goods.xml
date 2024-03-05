@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.goods.dao.GoodsDAO">
+    <resultMap id="goodsVO" type="GoodsVO">
+        <result column="goods_code" property="goods_code"/>
+        <result column="shop_code" property="shop_code"/>
+        <result column="goods_type" property="goods_type"/>
+        <result column="goods_sort" property="goods_sort"/>
+        <result column="goods_name" property="goods_name"/>
+        <result column="goods_price" property="goods_price"/>
+        <result column="goods_volume" property="goods_volume"/>
+        <result column="goods_content" property="goods_content"/>
+        <result column="goods_img1" property="goods_img1"/>
+        <result column="goods_img2" property="goods_img2"/>
+        <result column="goods_sell_count" property="goods_sell_count"/>
+        <result column="goods_credate" property="goods_create_date"/>
+        <result column="total_sell_count" property="total_sell_count"/>
+         <collection property="goodsColorVO" resultMap="goodsColorVO"/>
+    </resultMap>
+ <resultMap id="goodsColorVO" type="GoodsColorVO">
+        <result property="goods_code" column="goods_code"/>
+        <result property="goods_color1" column="GOODS_COLOR1"/>
+        <result property="goods_color2" column="GOODS_COLOR2"/>
+        <result property="goods_color3" column="GOODS_COLOR3"/>
+        <result property="goods_color4" column="GOODS_COLOR4"/>
+        <result property="goods_color5" column="GOODS_COLOR5"/>
+    </resultMap>
+
+<select id="selectAllGoodsList" resultMap="goodsVO">
+	<![CDATA[
+	SELECT *
+FROM P_GOODS pg
+JOIN (
+    SELECT GOODS_NAME, SUM(GOODS_SELL_COUNT) AS total_sell_count
+    FROM P_GOODS
+    GROUP BY GOODS_NAME
+) t ON pg.GOODS_NAME = t.GOODS_NAME 
+WHERE (pg.GOODS_NAME, pg.GOODS_PRICE) IN (
+    SELECT GOODS_NAME, MIN(GOODS_PRICE)
+    FROM P_GOODS
+    GROUP BY GOODS_NAME
+)
+ORDER BY total_sell_count desc
+	]]>
+	</select>
+	<select id="selectAllGoodsList1" resultMap="goodsVO">
+	<![CDATA[
+		 SELECT *
+FROM P_GOODS order by goods_credate
+	]]>
+	</select>
+	<select id="selectAllGoodsList2" resultMap="goodsVO">
+	<![CDATA[
+		 SELECT *
+FROM P_GOODS order by goods_sell_count desc
+	]]>
+	</select>
+	<select id="selectGoodsListPhone" resultMap="goodsVO">
+	<![CDATA[
+		 SELECT *
+FROM P_GOODS where goods_sort = 'phone' order by goods_credate
+	]]>
+	</select>
+	<select id="selectGoodsListAcc" resultMap="goodsVO">
+	<![CDATA[
+		 SELECT *
+FROM P_GOODS where goods_sort = 'acc' order by goods_credate
+	]]>
+	</select>
+	<select id="selectGoodsListCase" resultMap="goodsVO">
+	<![CDATA[
+		 SELECT *
+FROM P_GOODS where goods_sort = 'case' order by goods_credate
+	]]>
+	</select>
+	<select id="selectNewGoodsCode" resultMap="goodsVO">
+	<![CDATA[
+		
+  	SELECT 'goods' || LPAD(TO_CHAR(COALESCE(MAX(TO_NUMBER(SUBSTR(goods_code, 6))), 0) + 2), 3, '0') AS goods_code FROM P_GOODS
+
+	]]>
+	</select>
+	<select id="insertNewGoods" resultMap="goodsVO">
+<if test="goods_img1 != null and goods_img2 != null">
+    <![CDATA[
+    INSERT ALL
+    INTO P_GOODS (goods_code, SHOP_CODE, GOODS_TYPE, GOODS_SORT, GOODS_NAME, GOODS_PRICE, GOODS_VOLUME, GOODS_Content, GOODS_img1, GOODS_img2)
+    VALUES (#{goods_code}, #{shop_code}, #{goods_type}, #{goods_sort}, #{goods_name}, #{goods_price}, #{goods_volume}, #{goods_content}, #{goods_img1}, #{goods_img2})
+    INTO P_GOODS_COLORLIST (goods_code, GOODS_COLOR1, GOODS_COLOR2, GOODS_COLOR3, GOODS_COLOR4, GOODS_COLOR5)
+    VALUES (#{goods_code}, #{goodsColorVO.goods_color1}, #{goodsColorVO.goods_color2}, #{goodsColorVO.goods_color3}, #{goodsColorVO.goods_color4}, #{goodsColorVO.goods_color5})
+    SELECT 1 FROM DUAL
+    ]]>
+</if>
+<if test="goods_img1 == null and goods_img2 != null">
+    <![CDATA[
+    INSERT ALL
+    INTO P_GOODS (goods_code, SHOP_CODE, GOODS_TYPE, GOODS_SORT, GOODS_NAME, GOODS_PRICE, GOODS_VOLUME, GOODS_Content, GOODS_img1, GOODS_img2)
+    VALUES (#{goods_code}, #{shop_code}, #{goods_type}, #{goods_sort}, #{goods_name}, #{goods_price}, #{goods_volume}, #{goods_content}, null, #{goods_img2})
+    INTO P_GOODS_COLORLIST (goods_code, GOODS_COLOR1, GOODS_COLOR2, GOODS_COLOR3, GOODS_COLOR4, GOODS_COLOR5)
+    VALUES (#{goods_code}, #{goodsColorVO.goods_color1}, #{goodsColorVO.goods_color2}, #{goodsColorVO.goods_color3}, #{goodsColorVO.goods_color4}, #{goodsColorVO.goods_color5})
+    SELECT 1 FROM DUAL
+    ]]>
+</if>
+<if test="goods_img1 != null and goods_img2 == null">
+    <![CDATA[
+    INSERT ALL
+    INTO P_GOODS (goods_code, SHOP_CODE, GOODS_TYPE, GOODS_SORT, GOODS_NAME, GOODS_PRICE, GOODS_VOLUME, GOODS_Content, GOODS_img1, GOODS_img2)
+    VALUES (#{goods_code}, #{shop_code}, #{goods_type}, #{goods_sort}, #{goods_name}, #{goods_price}, #{goods_volume}, #{goods_content}, #{goods_img1}, null)
+    INTO P_GOODS_COLORLIST (goods_code, GOODS_COLOR1, GOODS_COLOR2, GOODS_COLOR3, GOODS_COLOR4, GOODS_COLOR5)
+    VALUES (#{goods_code}, #{goodsColorVO.goods_color1}, #{goodsColorVO.goods_color2}, #{goodsColorVO.goods_color3}, #{goodsColorVO.goods_color4}, #{goodsColorVO.goods_color5})
+    SELECT 1 FROM DUAL
+    ]]>
+</if>
+<if test="goods_img1 == null and goods_img2 == null">
+    <![CDATA[
+    INSERT ALL
+    INTO P_GOODS (goods_code, SHOP_CODE, GOODS_TYPE, GOODS_SORT, GOODS_NAME, GOODS_PRICE, GOODS_VOLUME, GOODS_Content, GOODS_img1, GOODS_img2)
+    VALUES (#{goods_code}, #{shop_code}, #{goods_type}, #{goods_sort}, #{goods_name}, #{goods_price}, #{goods_volume}, #{goods_content}, null, null)
+    INTO P_GOODS_COLORLIST (goods_code, GOODS_COLOR1, GOODS_COLOR2, GOODS_COLOR3, GOODS_COLOR4, GOODS_COLOR5)
+   VALUES (#{goods_code}, #{goodsColorVO.goods_color1}, #{goodsColorVO.goods_color2}, #{goodsColorVO.goods_color3}, #{goodsColorVO.goods_color4}, #{goodsColorVO.goods_color5})
+    SELECT 1 FROM DUAL
+    ]]>
+</if>
+
+	</select>
+	
+<select id="updateGoods" resultMap="goodsVO">
+		<if test="goods_img1 != null and goods_img2 != null">
+		<![CDATA[
+			BEGIN
+  			UPDATE P_GOODS
+  			SET
+  			GOODS_TYPE = #{goods_type},GOODS_SORT = #{goods_sort},GOODS_NAME = #{goods_name},GOODS_PRICE = #{goods_price},GOODS_VOLUME = #{goods_volume},GOODS_Content = #{goods_content},GOODS_img1 = #{goods_img1},GOODS_img2 = #{goods_img2}
+  			WHERE goods_code = #{goods_code};
+  			UPDATE P_GOODS_COLORLIST
+  			SET
+  			GOODS_COLOR1 = #{goodsColorVO.goods_color1},GOODS_COLOR2 = #{goodsColorVO.goods_color2},GOODS_COLOR3 = #{goodsColorVO.goods_color3},GOODS_COLOR4 = #{goodsColorVO.goods_color4},GOODS_COLOR5 = #{goodsColorVO.goods_color5} 
+  			WHERE goods_code = #{goods_code};
+			END;
+		]]>
+		</if>
+		<if test="goods_img1 == null and goods_img2 != null">
+		<![CDATA[
+			BEGIN
+  			UPDATE P_GOODS
+  			SET
+  			GOODS_TYPE = #{goods_type},GOODS_SORT = #{goods_sort},GOODS_NAME = #{goods_name},GOODS_PRICE = #{goods_price},GOODS_VOLUME = #{goods_volume},GOODS_Content = #{goods_content},GOODS_img2 = #{goods_img2}
+  			WHERE goods_code = #{goods_code};
+  			UPDATE P_GOODS_COLORLIST
+  			SET
+  			GOODS_COLOR1 = #{goodsColorVO.goods_color1},GOODS_COLOR2 = #{goodsColorVO.goods_color2},GOODS_COLOR3 = #{goodsColorVO.goods_color3},GOODS_COLOR4 = #{goodsColorVO.goods_color4},GOODS_COLOR5 = #{goodsColorVO.goods_color5} 
+  			WHERE goods_code = #{goods_code};
+			END;
+		]]>
+		</if>
+		<if test="goods_img1 != null and goods_img2 == null">
+		<![CDATA[
+			BEGIN
+  			UPDATE P_GOODS
+  			SET
+  			GOODS_TYPE = #{goods_type},GOODS_SORT = #{goods_sort},GOODS_NAME = #{goods_name},GOODS_PRICE = #{goods_price},GOODS_VOLUME = #{goods_volume},GOODS_Content = #{goods_content},GOODS_img1 = #{goods_img1}
+  			WHERE goods_code = #{goods_code};
+  			UPDATE P_GOODS_COLORLIST
+  			SET
+  			GOODS_COLOR1 = #{goodsColorVO.goods_color1},GOODS_COLOR2 = #{goodsColorVO.goods_color2},GOODS_COLOR3 = #{goodsColorVO.goods_color3},GOODS_COLOR4 = #{goodsColorVO.goods_color4},GOODS_COLOR5 = #{goodsColorVO.goods_color5} 
+  			WHERE goods_code = #{goods_code};
+			END;
+		]]>
+		</if>
+		<if test="goods_img1 == null and goods_img2 == null">
+  		<![CDATA[
+    		BEGIN
+      		UPDATE P_GOODS
+      		SET
+      		GOODS_TYPE = #{goods_type}, GOODS_SORT = #{goods_sort}, GOODS_NAME = #{goods_name}, GOODS_PRICE = #{goods_price}, GOODS_VOLUME = #{goods_volume}, GOODS_Content = #{goods_content}
+      		WHERE goods_code = #{goods_code};
+      		UPDATE P_GOODS_COLORLIST
+      		SET
+    		GOODS_COLOR1 = #{goodsColorVO.goods_color1}, GOODS_COLOR2 = #{goodsColorVO.goods_color2}, GOODS_COLOR3 = #{goodsColorVO.goods_color3}, GOODS_COLOR4 = #{goodsColorVO.goods_color4}, GOODS_COLOR5 = #{goodsColorVO.goods_color5} 
+	    	WHERE goods_code = #{goods_code};
+    		END;
+  		]]>
+		</if>
+	</select>
+
+
+
+	<select id="selectShopById" resultType="memberVO" parameterType="String">
+	<![CDATA[
+		 SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_Shop s ON m.id = s.id
+        WHERE m.id = #{id}
+	]]>
+	</select>
+	<select id="selectGoodsByShop" resultType="goodsVO" parameterType="String">
+	<![CDATA[
+		SELECT g.*,c.*
+		 FROM P_GOODS g
+		 JOIN P_GOODS_COLORLIST c ON g.goods_code = c.goods_code
+		 where g.shop_code = #{shop_code}
+	]]>
+	</select>
+	<select id="selectGoodsByCode" resultMap="goodsVO">
+	<![CDATA[
+		 SELECT g.*,c.*
+		 FROM P_GOODS g
+		 JOIN P_GOODS_COLORLIST c ON g.goods_code = c.goods_code
+		 where g.goods_code = #{goods_code}
+	]]>
+	</select>
+</mapper>

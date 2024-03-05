@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.order.dao.OrderDAO">
+    <resultMap id="orderVO" type="OrderVO">
+       <result column="max_rownum" property="max_rownum"/>
+       <result column="order_no" property="order_no"/>
+        <result column="order_date" property="order_date"/>
+        <result column="order_memo" property="order_memo"/>
+        <result column="order_call_num" property="order_call_num"/>
+        <result column="email" property="email"/>
+        <result column="name" property="name"/>
+        <result column="zipcode" property="zipcode"/>
+        <result column="roadAddress" property="roadAddress"/>
+        <result column="jibunAddress" property="jibunAddress"/>
+        <result column="namujiAddress" property="namujiAddress"/>
+        <result column="order_payment" property="order_payment"/>
+        <result column="order_price" property="order_price"/>
+        <result column="goods_qty" property="goods_qty"/>
+        <result column="goods_color" property="goods_color"/>
+        <result column="delivery" property="delivery"/>
+        <result column="id" property="id"/>
+        <result column="goods_code" property="goods_code"/>
+        <result column="goods_qty_order" property="goods_qty_order"/>
+    </resultMap>
+<resultMap id="orderMem" type="MemberVO">
+    <result property="id" column="id"/>
+    <result property="pwd" column="pwd"/>
+    <result property="name" column="name"/>
+    <result property="email" column="email"/>
+    <result property="memberSort" column="memberSort"/>
+    <result property="call_num" column="call_num"/>
+    <result property="birth" column="birth"/>
+    <result property="zipcode" column="zipcode"/>
+    <result property="roadAddress" column="roadAddress"/>
+    <result property="jibunAddress" column="jibunAddress"/>
+    <result property="namujiAddress" column="namujiAddress"/>
+    <result property="buyPoint" column="buyPoint"/>
+    <result property="imageFN" column="imageFN"/>
+    <result property="joinDate" column="joinDate"/>
+</resultMap>
+<select id="selectOrder" resultMap="orderVO">
+	<![CDATA[
+		
+  	SELECT * FROM p_order where order_no = #{order_no}
+	]]>
+	</select>
+	<select id="selectOrderByIdAndCode" resultMap="orderVO">
+	<![CDATA[
+		
+  	SELECT * FROM p_order where id = #{id} and goods_code = #{goods_code}
+	]]>
+	</select>
+<select id="selectOrderAll" resultMap="orderVO">
+	<![CDATA[
+		
+  	SELECT * FROM p_order 
+	]]>
+	</select>
+	<select id="selectOrderById" resultMap="orderVO">
+	<![CDATA[
+		
+  	SELECT * FROM p_order where id = #{id}
+	]]>
+	</select>
+	<select id="selectOrderByCode" resultMap="orderVO">
+	<![CDATA[
+  	SELECT o.* 
+FROM P_ORDER o 
+INNER JOIN P_GOODS g ON o.goods_code = g.goods_code
+WHERE g.shop_code = #{shop_code}
+	]]>
+	</select>
+	<select id="selectOrderNo" resultMap="orderVO">
+	<![CDATA[
+		
+  	SELECT MAX(rownum) AS max_rownum FROM p_order
+	]]>
+	</select>
+	
+	<select id="insertOrder" resultMap="orderVO">
+    <![CDATA[
+   INSERT INTO P_ORDER (order_no,  order_memo, order_call_num, email, name, zipcode, roadAddress, jibunAddress, namujiAddress, order_payment, order_price, goods_qty, goods_color, id, goods_code)
+VALUES (#{order_no},  #{order_memo}, #{order_call_num}, #{email}, #{name}, #{zipcode}, #{roadAddress}, #{jibunAddress}, #{namujiAddress}, #{order_payment}, #{order_price}, #{goods_qty}, #{goods_color}, #{id}, #{goods_code})
+    ]]>
+	</select>
+	<select id="updateDelivery" resultMap="orderVO">
+    <![CDATA[
+  UPDATE P_order
+SET delivery = #{delivery}
+WHERE order_no = #{order_no}
+    ]]>
+	</select>
+
+<select id="updateBuyPoint" resultMap="orderVO">
+    <![CDATA[
+  UPDATE p_member
+SET buyPoint = #{buyPoint_order}
+WHERE id = #{id}
+    ]]>
+	</select>
+	<select id="updateSellCount" resultMap="orderVO">
+    <![CDATA[
+  UPDATE p_goods
+SET goods_sell_count = #{goods_qty_order}
+WHERE goods_code = #{goods_code}
+    ]]>
+	</select>
+</mapper>

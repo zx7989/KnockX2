@@ -1,0 +1,54 @@
+/*
+해당 사이트에서 사용하는 폰트외에 나머지는 주석처리 해주셔야 더 빠르게 로딩됩니다.
+최대 2개의 폰트만 사용하는걸 권장합니다.
+*/
+
+@font-face {
+    font-family: 'Noto Sans Korean';
+    font-style: light;
+    font-weight: 300;
+    src: local('Noto Sans Light'), local('NotoSans-Light'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Light-Hestia.eot),
+    url(/smc/resources/pis/fonts/NotoSansKR-Light-Hestia.eot?#iefix) format('embedded-opentype'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Light-Hestia.woff) format('woff'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Light-Hestia.otf) format('opentype');
+}
+@font-face {
+    font-family: 'Noto Sans Korean';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Noto Sans Regular'), local('NotoSans-Regular'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Regular-Hestia.eot),
+    url(/smc/resources/pis/fonts/NotoSansKR-Regular-Hestia.eot?#iefix) format('embedded-opentype'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Regular-Hestia.woff) format('woff'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Regular-Hestia.otf) format('opentype');
+}
+
+@font-face {
+    font-family: 'Noto Sans Korean';
+    font-style: medium;
+    font-weight: 500;
+    src: local('Noto Sans Medium'), local('NotoSans-medium'),
+    url(/smc/resources/pis/fonts/notokr-medium.eot),
+    url(/smc/resources/pis/fonts/notokr-medium.woff) format('woff'),
+    url(/smc/resources/pis/fonts/notokr-medium.woff2) format('woff'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Medium.otf) format('opentype');
+}
+
+@font-face {
+    font-family: 'Noto Sans Korean';
+    font-style: bold;
+    font-weight: 700;
+    src: local('Noto Sans Bold'), local('NotoSans-Bold'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Bold-Hestia.eot),
+    url(/smc/resources/pis/fonts/NotoSansKR-Bold-Hestia.eot?#iefix) format('embedded-opentype'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Bold-Hestia.woff) format('woff'),
+    url(/smc/resources/pis/fonts/NotoSansKR-Bold-Hestia.otf) format('opentype');
+}
+
+@font-face {
+    font-family: 'esamanru';
+    /* font-style: medium;
+    font-weight: 500; */
+    src: url(/smc/resources/pis/fonts/esamanru-Medium.ttf) format('truetype');
+}

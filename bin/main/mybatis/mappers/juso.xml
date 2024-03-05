@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.juso.dao.JusoDAO">
+    <resultMap id="jusoResult" type="com.knockx2.juso.vo.JusoVO">
+        <result column="custid" property="custid"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="phone" property="phone"/>
+    </resultMap>
+
+
+	<select id="selectJuso" resultMap="jusoResult">
+	<![CDATA[
+		 SELECT * from customer
+	]]>
+	</select>
+	<insert id="insertJuso" parameterType="jusoVO">
+	<![CDATA[
+		insert into customer values(custid_seq.NEXTVAL,#{name},#{address},#{phone})
+	]]>
+	</insert>
+</mapper>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.myPage.dao.MyPageDAO">
+<resultMap id="myPageMem" type="MemberVO">
+    <result property="id" column="id"/>
+    <result property="pwd" column="pwd"/>
+    <result property="name" column="name"/>
+    <result property="email" column="email"/>
+    <result property="memberSort" column="memberSort"/>
+    <result property="call_num" column="call_num"/>
+    <result property="birth" column="birth"/>
+    <result property="zipcode" column="zipcode"/>
+    <result property="roadAddress" column="roadAddress"/>
+    <result property="jibunAddress" column="jibunAddress"/>
+    <result property="namujiAddress" column="namujiAddress"/>
+    <result property="buyPoint" column="buyPoint"/>
+    <result property="imageFN" column="imageFN"/>
+    <result property="joinDate" column="joinDate"/>
+    <collection property="shopVO" resultMap="myPageShop" ></collection>
+</resultMap>
+<resultMap id="myPageShop" type="ShopVO">
+	<result property="shop_code" column="shop_code"/>
+	<result property="id" column="id"/>
+	<result property="shop_name" column="shop_name"/>
+	<result property="shop_num" column="shop_num"/>
+	<result property="shopTotalPrice" column="shop_total_price"/>
+</resultMap>
+
+
+
+	<select id="selectMemberById" resultType="memberVO" parameterType="String">
+	<![CDATA[
+		select * from P_MEMBER where id = #{id}
+	]]>
+	</select>
+	<select id="selectShopById" resultMap="myPageMem" parameterType="String">
+	<![CDATA[
+		 SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_Shop s ON m.id = s.id
+        WHERE m.id = #{id}
+	]]>
+	
+	</select>
+	
+	<select id="loginById" resultType="memberVO" parameterType="memberVO">
+	<![CDATA[
+		select * from P_MEMBER where id = #{id} and pwd = #{pwd}
+	]]>
+	</select>
+	
+	<select id="deleteMember" parameterType="String">
+	<![CDATA[
+		delete from P_MEMBER 
+		where id=#{id}
+	]]>
+	</select>
+	
+	<update id="updateMember" parameterType="MemberVO">
+	
+	<if test="imageFN != null">
+	<![CDATA[
+		UPDATE P_MEMBER
+    SET pwd = #{pwd},name = #{name},email = #{email},memberSort = #{memberSort},call_num = #{call_num},birth = #{birth},"ZIPCODE" = #{zipcode},"ROADADDRESS" = #{roadAddress},"JIBUNADDRESS" = #{jibunAddress},"NAMUJIADDRESS" = #{namujiAddress},buyPoint = #{buyPoint},imageFN = #{imageFN}
+    WHERE id = #{id}
+	]]>
+	</if>
+	<if test="imageFN == null">
+	<![CDATA[
+		UPDATE P_MEMBER
+    SET pwd = #{pwd},name = #{name},email = #{email},memberSort = #{memberSort},call_num = #{call_num},birth = #{birth},"ZIPCODE" = #{zipcode},"ROADADDRESS" = #{roadAddress},"JIBUNADDRESS" = #{jibunAddress},"NAMUJIADDRESS" = #{namujiAddress},buyPoint = #{buyPoint}
+    WHERE id = #{id}
+	]]>
+	</if>
+	
+	</update>
+	<update id="updateShop" parameterType="ShopVO">
+		<![CDATA[
+	UPDATE P_SHOP
+    SET shop_name = #{shop_name}, shop_num = #{shop_num}
+    WHERE id = #{id}
+	]]>
+	</update>
+	<resultMap id="goodsResult" type="com.knockx2.goods.vo.GoodsVO">
+        <result column="goods_code" property="goods_code"/>
+        <result column="shop_code" property="shop_code"/>
+        <result column="goods_type" property="goods_type"/>
+        <result column="goods_sort" property="goods_sort"/>
+        <result column="goods_name" property="goods_name"/>
+        <result column="goods_price" property="goods_price"/>
+        <result column="goods_volume" property="goods_volume"/>
+        <result column="goods_content" property="goods_content"/>
+        <result column="goods_img1" property="goods_img1"/>
+        <result column="goods_img2" property="goods_img2"/>
+        <result column="goods_sell_count" property="goods_sell_count"/>
+        <result column="goods_credate" property="goods_create_date"/>
+    </resultMap>
+   
+    <resultMap id="shopMemResult" type="com.knockx2.member.vo.MemberVO">
+        <result property="id" column="id"/>
+        <result property="pwd" column="pwd"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="memberSort" column="memberSort"/>
+        <result property="call_num" column="call_num"/>
+        <result property="birth" column="birth"/>
+        <result property="zipcode" column="zipcode"/>
+        <result property="roadAddress" column="roadAddress"/>
+        <result property="jibunAddress" column="jibunAddress"/>
+        <result property="namujiAddress" column="namujiAddress"/>
+        <result property="buyPoint" column="buyPoint"/>
+        <result property="imageFN" column="imageFN"/>
+        <result property="joinDate" column="joinDate"/>
+        <collection property="shopVO" resultMap="shopSubResult"></collection>
+    </resultMap>
+    <resultMap id="shopSubResult" type="com.knockx2.member.vo.ShopVO">
+        <result property="shop_code" column="shop_code"/>
+        <result property="id" column="id"/>
+        <result property="shop_name" column="shop_name"/>
+        <result property="shop_num" column="shop_num"/>
+        <result property="shopTotalPrice" column="shop_total_price"/>
+    </resultMap>
+
+<resultMap id="memAddResult" type="MemberAddVO">
+    <result property="id" column="id"/>
+    <result property="m_voice" column="m_voice"/>
+    <result property="m_data" column="m_data"/>
+    <result property="m_sms" column="m_sms"/>
+    <result property="m_dis" column="m_dis"/>
+</resultMap>
+
+	<select id="selectShopGoodsList" resultMap="goodsResult">
+	<![CDATA[
+		SELECT * FROM P_GOODS WHERE shop_code = #{shop_code}
+	]]>
+	</select>
+	<select id="selectShopByShopCode" resultMap="shopMemResult">
+	<![CDATA[
+		SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_Shop s ON m.id = s.id
+        WHERE s.shop_code = #{shop_code}
+	]]>
+	</select>
+	
+	<select id="deleteGoods" parameterType="String">
+	<![CDATA[
+		delete from P_GOODS
+		where goods_code=#{goods_code}
+	]]>
+	</select>
+	
+	<select id="MemberRate" resultMap="memAddResult" parameterType="MemberAddVO">
+	<![CDATA[
+		select * from P_MEMBER_ADD where id = #{id}
+	]]>
+	</select>
+	
+</mapper>
+
+    
+	
+

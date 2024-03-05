@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.cart.dao.CartDAO">
+	<resultMap id="cartResult" type="CartVO">
+    	<result property="cartNO" column="cartNO" />
+    	<result property="id" column="id" />
+    	<result property="goods_code" column="goods_code" />
+    	<result property="goods_color" column="goods_color" />
+    	<result property="goods_qty" column="goods_qty" />
+    	<result property="max_rownum" column="max_rownum" />
+  	</resultMap>
+  	
+  	<resultMap id="goodsVO1" type="GoodsVO">
+        <result column="goods_code" property="goods_code"/>
+        <result column="shop_code" property="shop_code"/>
+        <result column="goods_type" property="goods_type"/>
+        <result column="goods_sort" property="goods_sort"/>
+        <result column="goods_name" property="goods_name"/>
+        <result column="goods_price" property="goods_price"/>
+        <result column="goods_volume" property="goods_volume"/>
+        <result column="goods_content" property="goods_content"/>
+        <result column="goods_img1" property="goods_img1"/>
+        <result column="goods_img2" property="goods_img2"/>
+        <result column="goods_sell_count" property="goods_sell_count"/>
+        <result column="goods_credate" property="goods_create_date"/>
+        <result column="total_sell_count" property="total_sell_count"/>
+         <collection property="cartVO" resultMap="cartResult"/>
+    </resultMap>
+  		<select id="selectCartNO" resultMap="cartResult">
+			 <![CDATA[
+			 	select max(cartNO) as cartNO from p_cart
+			 	]]>
+			 	
+	 </select>
+  	  	<select id="selectMyCartList" resultMap="goodsVO1">
+	<![CDATA[
+		SELECT *
+		FROM p_cart c
+		JOIN p_goods g ON c.goods_code = g.goods_code
+		WHERE c.id = #{cartVO.id}	
+		]]>
+	</select>
+	<select id="selectcartNO" resultMap="goodsVO1">
+	<![CDATA[
+		SELECT max(rownum) AS max_rownum FROM p_cart c INNER JOIN p_goods g ON c.goods_code = g.goods_code
+		]]>
+	</select>
+	
+	<select id="insertCart" resultMap="cartResult">
+	<if test="goods_qty != null">
+    	<![CDATA[
+    	INSERT INTO P_CART values(#{cartNO},#{id},#{goods_code},#{goods_color},#{goods_qty})
+    	]]>
+	</if>
+	<if test="goods_qty == null">
+    	<![CDATA[
+    	INSERT INTO P_CART (cartNO,id,goods_code,goods_color) values(#{cartNO},#{id},#{goods_code},#{goods_color})
+    	]]>
+	</if>
+	</select>
+
+	<select id="deleteCartGoods" resultType="int">
+		<![CDATA[
+		delete from p_cart where cartNO = #{cartNO}
+		]]>
+	</select>
+	
+	<select id="updateQty" resultType="int">
+		<![CDATA[
+		update p_cart set goods_qty = #{goods_qty} 
+		where cartNO = #{cartNO}
+		]]>
+	</select>
+</mapper>

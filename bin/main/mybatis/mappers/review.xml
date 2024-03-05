@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.review.dao.ReviewDAO">
+    <resultMap id="reviewVO" type="ReviewVO">
+         <result column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="writedate" property="writedate"/>
+        <result column="rating" property="rating"/>
+        <result column="goods_code" property="goods_code"/>
+    </resultMap>
+        <select id="selectReviewListAll" resultMap="reviewVO">
+	<![CDATA[
+	SELECT * from P_GOODS_REVIEW
+	]]>
+	</select>
+      <select id="selectReviewListByGoods" resultMap="reviewVO">
+	<![CDATA[
+	SELECT * from P_GOODS_REVIEW where goods_code = #{goods_code}
+	]]>
+	</select>
+    <select id="selectReviewByCode" resultMap="reviewVO">
+	<![CDATA[
+	SELECT * from P_GOODS_REVIEW where id = #{id} and goods_code = #{goods_code}
+	]]>
+	</select>
+	<select id="insertReview" resultMap="reviewVO">
+    <![CDATA[
+  INSERT INTO p_goods_review (id, goods_code, content, rating)
+VALUES (#{id}, #{goods_code}, #{content}, #{rating})
+
+    ]]>
+	</select>
+	<select id="deleteReview" resultType="reviewVO">
+    <![CDATA[
+Delete from p_goods_review where goods_code=#{goods_code} and id = #{id}
+
+    ]]>
+	</select>
+</mapper>

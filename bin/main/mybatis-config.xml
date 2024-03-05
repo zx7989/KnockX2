@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration 	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<mappers>
+	<mapper resource="mybatis/mappers/member.xml"/>
+	<mapper resource="mybatis/mappers/goods.xml"/>
+	<mapper resource="mybatis/mappers/board.xml"/>
+	<mapper resource="mybatis/mappers/shop.xml"/>
+	<mapper resource="mybatis/mappers/myPage.xml"/>
+	<mapper resource="mybatis/mappers/review.xml"/>
+	<mapper resource="mybatis/mappers/order.xml"/>
+	<mapper resource="mybatis/mappers/cart.xml"/>
+	<mapper resource="mybatis/mappers/boardCmt.xml"/>
+	<mapper resource="mybatis/mappers/juso.xml"/>
+	</mappers>
+	
+</configuration>
+

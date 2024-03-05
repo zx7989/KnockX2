@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="com.knockx2.reply.dao.ReplyDAO">
+	
+	<resultMap id="replyVO" type="ReplyVO">
+	<result property="rno" column="rno" />
+    <result property="articleNO" column="articleNO" />
+    <result property="id" column="id" />
+    <result property="content" column="content" />
+    <result property="writeDate" column="writeDate" />
+  </resultMap> 
+  
+	<!-- 댓글 조회 -->
+<select id="selectListCmt" resultMap="replyVO">
+    <![CDATA[  
+    select * from P_COMMENT
+        where articleNO = #{articleNO}
+	]]>
+</select>
+
+<!-- 댓글 작성 -->
+
+<select id="selectInsertCmt" resultMap="replyVO">
+   <![CDATA[ 
+    insert into P_COMMENT(rno, id, articleNO, content)
+        values(#{rno}, #{id, jdbcType=VARCHAR}, #{articleNO}, #{content})
+   ]]>
+   
+   
+</select>
+<!--댓글 수정-->
+<update id="modUpdateCmt" parameterType="replyVO">
+	<![CDATA[
+	update P_COMMENT set
+		content = #{content} 
+	where rno = #{rno}
+
+	]]>
+	 
+</update>
+
+<!--댓글 삭제-->
+<delete id="deleteCmt" parameterType="replyVO">
+	<![CDATA[ 
+    delete from P_COMMENT
+    where rno = #{rno}
+    ]]>
+    
+</delete>
+
+</mapper>

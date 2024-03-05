@@ -1,0 +1,108 @@
+plugins {
+	id 'java'
+	id 'war'
+	id 'org.springframework.boot' version '3.1.8'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.knockx2'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'
+// https://mvnrepository.com/artifact/org.projectlombok/lombok
+compileOnly 'org.projectlombok:lombok:1.18.24'
+
+// https://mvnrepository.com/artifact/org.sitemesh/sitemesh
+implementation 'org.sitemesh:sitemesh:3.0.1'
+// https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
+implementation 'commons-fileupload:commons-fileupload:1.2.1'
+// https://mvnrepository.com/artifact/commons-io/commons-io
+implementation 'commons-io:commons-io:1.4'
+
+	// https://mvnrepository.com/artifact/jakarta.servlet.jsp.jstl/jakarta.servlet.jsp.jstl-api
+implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
+// https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
+compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+// https://mvnrepository.com/artifact/org.glassfish.web/jakarta.servlet.jsp.jstl
+implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
+	
+		
+	// https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper
+implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+// https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
+implementation 'commons-beanutils:commons-beanutils:1.8.0'
+// https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp
+implementation 'commons-dbcp:commons-dbcp:1.2.2'
+// https://mvnrepository.com/artifact/cglib/cglib-nodep
+implementation 'cglib:cglib-nodep:2.2'
+// https://mvnrepository.com/artifact/javax.servlet/jsp-api
+compileOnly 'javax.servlet:jsp-api:2.0'
+// https://mvnrepository.com/artifact/javax.servlet/servlet-api
+compileOnly 'javax.servlet:servlet-api:2.5'
+// https://mvnrepository.com/artifact/javax.servlet.jsp/jsp-api
+compileOnly 'javax.servlet.jsp:jsp-api:2.1'
+// https://mvnrepository.com/artifact/javax.servlet/jstl
+
+
+// https://mvnrepository.com/artifact/c3p0/c3p0
+implementation 'c3p0:c3p0:0.9.1.2'
+// https://mvnrepository.com/artifact/org.apache.tiles/tiles-jsp
+implementation 'org.apache.tiles:tiles-jsp:3.0.8'
+// https://mvnrepository.com/artifact/org.apache.tiles/tiles-core
+implementation 'org.apache.tiles:tiles-core:3.0.8'
+// https://mvnrepository.com/artifact/org.apache.tiles/tiles-servlet
+implementation 'org.apache.tiles:tiles-servlet:3.0.8'
+
+
+// https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+//implementation 'org.springframework:spring-webmvc:3.1.1.RELEASE'
+
+// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
+testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+testImplementation 'org.springframework.boot:spring-boot-starter-test:1.5.2.RELEASE'
+implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.5'
+ implementation 'org.springframework:spring-context:6.0.7'
+    implementation 'org.springframework:spring-context-support:6.0.7'
+  implementation 'com.sun.mail:jakarta.mail:2.0.1'
+  implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.2'
+implementation 'jakarta.mail:jakarta.mail-api:1.6.7'
+
+	implementation fileTree(dir: 'libs', include: ['*,jar'])
+	implementation files('libs/ojdbc6.jar')
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'	
+	
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+}
+
+tasks.named('bootBuildImage') {
+	builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

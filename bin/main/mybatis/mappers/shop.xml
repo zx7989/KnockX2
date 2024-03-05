@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.knockx2.shop.dao.ShopDAO">
+    <resultMap id="goodsResult" type="com.knockx2.goods.vo.GoodsVO">
+        <result column="goods_code" property="goods_code"/>
+        <result column="shop_code" property="shop_code"/>
+        <result column="goods_type" property="goods_type"/>
+        <result column="goods_sort" property="goods_sort"/>
+        <result column="goods_name" property="goods_name"/>
+        <result column="goods_price" property="goods_price"/>
+        <result column="goods_volume" property="goods_volume"/>
+        <result column="goods_content" property="goods_content"/>
+        <result column="goods_img1" property="goods_img1"/>
+        <result column="goods_img2" property="goods_img2"/>
+        <result column="goods_sell_count" property="goods_sell_count"/>
+        <result column="goods_credate" property="goods_create_date"/>
+   <collection property="goodsColorVO" resultMap="goodsColorVO1"/>
+    </resultMap>
+ <resultMap id="goodsColorVO1" type="com.knockx2.goods.vo.GoodsColorVO">
+        <result property="goods_code" column="goods_code"/>
+        <result property="goods_color1" column="GOODS_COLOR1"/>
+        <result property="goods_color2" column="GOODS_COLOR2"/>
+        <result property="goods_color3" column="GOODS_COLOR3"/>
+        <result property="goods_color4" column="GOODS_COLOR4"/>
+        <result property="goods_color5" column="GOODS_COLOR5"/>
+    </resultMap>
+   
+    <resultMap id="shopMemResult" type="com.knockx2.member.vo.MemberVO">
+        <result property="id" column="id"/>
+        <result property="pwd" column="pwd"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="memberSort" column="memberSort"/>
+        <result property="call_num" column="call_num"/>
+        <result property="birth" column="birth"/>
+        <result property="zipcode" column="zipcode"/>
+        <result property="roadAddress" column="roadAddress"/>
+        <result property="jibunAddress" column="jibunAddress"/>
+        <result property="namujiAddress" column="namujiAddress"/>
+        <result property="buyPoint" column="buyPoint"/>
+        <result property="imageFN" column="imageFN"/>
+        <result property="joinDate" column="joinDate"/>
+        <collection property="shopVO" resultMap="shopSubResult"></collection>
+    </resultMap>
+    <resultMap id="shopSubResult" type="com.knockx2.member.vo.ShopVO">
+        <result property="shop_code" column="shop_code"/>
+        <result property="id" column="id"/>
+        <result property="shop_name" column="shop_name"/>
+        <result property="shop_num" column="shop_num"/>
+        <result property="shopTotalPrice" column="shop_total_price"/>
+    </resultMap>
+
+
+
+	<select id="selectShopGoodsList" resultMap="goodsResult">
+	<![CDATA[
+		 SELECT g.*, c.*
+        FROM P_GOODS g
+        JOIN P_GOODS_COLORLIST c ON g.goods_code = c.goods_code
+        where g.shop_code = #{shop_code} order by g.goods_name
+	]]>
+	</select>
+	<select id="selectShopPhonesList" resultMap="goodsResult">
+	<![CDATA[
+		 SELECT g.*, c.*
+        FROM P_GOODS g
+        JOIN P_GOODS_COLORLIST c ON g.goods_code = c.goods_code
+        where g.shop_code = #{shop_code} and g.goods_sort = 'phone' order by g.goods_name
+	]]>
+	</select>
+	<select id="selectShopAccsList" resultMap="goodsResult">
+	<![CDATA[
+		 SELECT g.*, c.*
+        FROM P_GOODS g
+        JOIN P_GOODS_COLORLIST c ON g.goods_code = c.goods_code
+        where g.shop_code = #{shop_code} and g.goods_sort = 'acc' order by g.goods_name
+	]]>
+	</select>
+	<select id="selectShopCasesList" resultMap="goodsResult">
+	<![CDATA[
+		 SELECT g.*, c.*
+        FROM P_GOODS g
+        JOIN P_GOODS_COLORLIST c ON g.goods_code = c.goods_code
+        where g.shop_code = #{shop_code} and g.goods_sort = 'case' order by g.goods_name
+	]]>
+	</select>
+	
+	<select id="selectShopByShopCode" resultMap="shopMemResult">
+	<![CDATA[
+		SELECT m.*, s.*
+        FROM P_MEMBER m
+        JOIN P_Shop s ON m.id = s.id
+        WHERE s.shop_code = #{shop_code}
+	]]>
+	</select>
+	
+
+</mapper>
